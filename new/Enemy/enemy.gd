@@ -47,6 +47,8 @@ func _physics_process(delta: float) -> void:
 		update_animation()
 	
 func distance_to_player() -> float:
+	if player == null:
+		return INF
 	return global_position.distance_to(player.global_position)
 
 
@@ -86,4 +88,16 @@ func death() -> void:
 	queue_free()
 
 func _on_hitbox_area_entered(area: Area2D) -> void:
+	if state != State.ATTACK:
+		return
+
+	if player == null:
+		return
+
+	if area.owner != player:
+		return
+
+	if distance_to_player() > attack_range:
+		return
+
 	area.owner.take_damage(attack_damage)
